@@ -3,10 +3,15 @@ package com.hwasalko.app.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +22,7 @@ import com.hwasalko.app.entity.ToDo;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.hwasalko.app.dao.ToDoListDao;
+import com.hwasalko.app.dao.ToDoListRepasitoy;
 
 /**
  * 
@@ -31,7 +36,7 @@ import com.hwasalko.app.dao.ToDoListDao;
 public class ToDoListRestController {
 
 	@Autowired
-	private ToDoListDao toDoListDao;
+	private ToDoListRepasitoy toDoListRepasitoy;
 
 	
 	// Insert API
@@ -39,23 +44,27 @@ public class ToDoListRestController {
 	public ToDo add(@Valid ToDo toDo, BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
-	        //return "form";
 			log.error("########## 에러발생 ######### : " + bindingResult.toString());
 	    }
 		
-		toDo.setRegDate(new Date());			// 현재시간 주입
-		toDo.setFianlUpdateDate(new Date());	// 현재시간 주입
+		toDo.setRegDate( LocalDateTime.now() );			// 현재시간 주입
+		toDo.setFianlUpdateDate( LocalDateTime.now() );	// 현재시간 주입
+		toDo.setComplete(false);						// 완료여부 false 주입
 		
-		ToDo toDoData = toDoListDao.save(toDo);	// DB insert
+		ToDo toDoData = toDoListRepasitoy.save(toDo);	// DB insert
 
 		return toDoData;
 	}
 
 	// Select list API
 	@RequestMapping("/list")
-	public List<ToDo> list(Model model) {
+	public Page<ToDo> list(
+			Model model, 
+			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size=5) Pageable pageable)	// 기본 페이지 정보 
+	{	
 
-		List<ToDo> toDoList = toDoListDao.findAll();
+		log.info("[pageable] " + pageable.toString() );
+		Page<ToDo> toDoList = toDoListRepasitoy.findAll(pageable);
 
 		return toDoList;
 	}
@@ -64,7 +73,7 @@ public class ToDoListRestController {
 	@RequestMapping("/list/{id}")
 	public Optional<ToDo> view(@PathVariable int id) {
 
-		Optional<ToDo> toDo = toDoListDao.findById(id);
+		Optional<ToDo> toDo = toDoListRepasitoy.findById(id);
 
 		return toDo;
 	}
@@ -73,7 +82,7 @@ public class ToDoListRestController {
 	// delete API
 	@RequestMapping("/delete/{id}")
 	public boolean delete(@PathVariable int id) {
-		toDoListDao.deleteById(id);
+		toDoListRepasitoy.deleteById(id);
 		return true;
 	}
 	
@@ -81,7 +90,7 @@ public class ToDoListRestController {
 	// delete All API
 	@RequestMapping("/deleteAll")
 	public boolean deleteAll() {
-		toDoListDao.deleteAll();
+		toDoListRepasitoy.deleteAll();
 		return true;
 	}
 	
@@ -95,9 +104,14 @@ public class ToDoListRestController {
 			log.error("########## 에러발생 ######### : " + bindingResult.toString());
 	    }
 		
-		toDo.setFianlUpdateDate(new Date());	// 현재시간 주입
+		// DB의 객체를 불러와 필요한 부분만 수정함
+		ToDo updateToDo = toDoListRepasitoy.getOne(id);
 		
-		ToDo toDoData = toDoListDao.save(toDo);	// DB Update
+		updateToDo.setJob(toDo.getJob()); 						// 할일
+		updateToDo.setComplete(toDo.isComplete()); 				// 완료여부
+		updateToDo.setFianlUpdateDate( LocalDateTime.now() );	// 최종수정시간
+		
+		ToDo toDoData = toDoListRepasitoy.save(updateToDo);	// DB Update
 
 		return toDoData;
 	}

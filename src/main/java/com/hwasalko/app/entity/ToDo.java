@@ -1,16 +1,20 @@
 package com.hwasalko.app.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.Data;
 
 /**
  * 
@@ -23,42 +27,43 @@ import lombok.Setter;
  * - getter와 setter는 lombok을 사용한다.
  */
 
-
-@Getter
-@Setter
 @Entity
+@Data
 public class ToDo {
 
 	// id (pk)
 	@Id
 	@GeneratedValue
-	int id;
+	private int id;
 
 	
 	// 할일 (text)
 	@NotNull
-	@Column(nullable = false)
 	@Size(min = 1, max = 4000)
-	String job;
+	@Column(nullable = false, length=4000)
+	private String job;
 	
 	
 	// 작성일시
-	@NotNull
-	@Column(nullable = false)
-	Date regDate;
+	@Column(nullable = false, updatable = false)
+	@CreationTimestamp
+	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
+	private LocalDateTime regDate;
 	
 	
 	// 최종수정일시
-	@NotNull
 	@Column(nullable = false)
-	Date fianlUpdateDate;
+	@CreationTimestamp
+	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
+	private LocalDateTime fianlUpdateDate;
 	
 	
 	// 완료여부
 	@NotNull
 	@Column(nullable = false)
-	boolean isComplete;
+	private boolean complete;
 
 
+	
 
 }

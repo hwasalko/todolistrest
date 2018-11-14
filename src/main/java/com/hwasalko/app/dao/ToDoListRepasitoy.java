@@ -11,6 +11,6 @@ import com.hwasalko.app.entity.ToDo;
  * JpaRepository 상속 인터페이스
  */
 
-public interface ToDoListDao extends JpaRepository <ToDo, Integer> {
+public interface ToDoListRepasitoy extends JpaRepository <ToDo, Integer> {
 
 }
