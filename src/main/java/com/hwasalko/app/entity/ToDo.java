@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -47,15 +48,15 @@ public class ToDo {
 	// 작성일시
 	@Column(nullable = false, updatable = false)
 	@CreationTimestamp
-	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime regDate;
 	
 	
 	// 최종수정일시
-	@Column(nullable = false)
-	@CreationTimestamp
-	@JsonFormat(pattern="yyyy-MM-dd hh:mm:ss")
-	private LocalDateTime fianlUpdateDate;
+	@Column(nullable = false, updatable = true)
+	@UpdateTimestamp
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime finalUpdateDate;
 	
 	
 	// 완료여부
