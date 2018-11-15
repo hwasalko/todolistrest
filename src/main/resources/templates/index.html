@@ -1,120 +1,291 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>TODO List 프로그램 thymeleaf</title>
-	<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css">
-</head>
-<body>
-	<div class="container" style="padding-top:20px;">
-	
-		<div class="page-header">
-			<blockquote class="blockquote">
-			  <h2>| TODO List Application <small>pre work</small></h2>
-			</blockquote>
-	    </div>
-	    
-	    <hr>  
-	  
-	  
-      
-      <!-- 신규입력폼 -->
-	  <div class="form-group row">
-	    <div class="col-sm-7">
-	      <input type="text" class="form-control" placeholder="'할일(TODO)'을 입력 후 등록 버튼을 클릭하세요">
-	    </div>
-	    <div class="col-sm-3">
-	    	<button type="button" class="btn btn-danger">등록</button>  
-	    </div>
-	    <div class="col-sm-2 text-right">
-	    	<button type="button" class="btn btn-primary">새로고침</button>  
-	    </div>
-	  </div>
-	  
-      	
-      <p/>	
-      	
-      <table class="table table-hover table-bordered">
-		  <thead class="thead-dark">
-		    <tr>
-		      <th class="text-center" scope="col">id</th>
-		      <th class="text-center" scope="col">할일</th>
-		      <th class="text-center" scope="col">작성일시</th>
-		      <th class="text-center" scope="col">최종수정일시</th>
-		      <th class="text-center" scope="col">완료처리</th>
-		      <th class="text-center" scope="col">button</th>
-		    </tr>
-		  </thead>
-		  <tbody>
-		    <tr>
-		      <th class="text-center" scope="row">1</th>
-		      <td>집안일</td>
-		      <td class="text-center">2018-04-01 10:00:00</td>
-		      <td class="text-center">2018-04-01 13:00:00</td>
-		      <td class="text-center"><input type="checkbox"/></td>
-		      <td class="text-center">
-		      	<button type="button" class="btn btn-outline-success btn-sm">수정</button>
-		      	<button type="button" class="btn btn-outline-danger btn-sm">삭제</button>
-		      </td>
-		    </tr>
-		    <tr>
-		      <th class="text-center" scope="row">2</th>
-		      <td>빨래 @1</td>
-		      <td class="text-center">2018-04-01 11:00:00</td>
-		      <td class="text-center">2018-04-01 11:00:00</td>
-		      <td class="text-center">Y</td>
-		      <td class="text-center">
-		      	<button type="button" class="btn btn-outline-success btn-sm">수정</button>
-		      	<button type="button" class="btn btn-outline-danger btn-sm">삭제</button>
-		      </td>
-		    </tr>
-		    <tr>
-		      <th class="text-center" scope="row">3</th>
-		      <td>청소 @1</td>
-		      <td class="text-center">2018-04-01 12:00:00</td>
-		      <td class="text-center">2018-04-01 13:00:00</td>
-		      <td class="text-center"></td>
-		      <td class="text-center">
-		      	<button type="button" class="btn btn-outline-success btn-sm">수정</button>
-		      	<button type="button" class="btn btn-outline-danger btn-sm">삭제</button>
-		      </td>
-		    </tr>
-		    <tr>
-		      <th class="text-center" scope="row">4</th>
-		      <td>방청소 @1 @3</td>
-		      <td class="text-center">2018-04-01 12:00:00</td>
-		      <td class="text-center">2018-04-01 13:00:00</td>
-		      <td class="text-center"></td>
-		      <td class="text-center">
-		      	<button type="button" class="btn btn-outline-success btn-sm">수정</button>
-		      	<button type="button" class="btn btn-outline-danger btn-sm">삭제</button>
-		      </td>
-		    </tr>
-		  </tbody>
-		</table>
-		
-		
-		<nav aria-label="Page navigation example">
-		  <ul class="pagination justify-content-center">
-		    <li class="page-item disabled">
-		      <a class="page-link" href="#" tabindex="-1">Previous</a>
-		    </li>
-		    <li class="page-item"><a class="page-link" href="#">1</a></li>
-		    <li class="page-item"><a class="page-link" href="#">2</a></li>
-		    <li class="page-item"><a class="page-link" href="#">3</a></li>
-		    <li class="page-item">
-		      <a class="page-link" href="#">Next</a>
-		    </li>
-		  </ul>
-		</nav>
-		
-     
-	</div>
 
-	<script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
-	<script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<title>TODO List 프로그램</title>
+		
+		<link rel="stylesheet" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/webjars/font-awesome/5.5.0/css/all.css">
+	</head>
+
+
+	<body>
+		<div class="container" style="padding-top:20px;">
+		
+			<div class="page-header">
+				<blockquote class="blockquote">
+				  	<h2>TODO List Application <small><span class="text-muted">pre work</span></small></h2>
+				</blockquote>
+		    </div>
+		    
+		    <hr>  
+		  
+		  
+	      
+	      <!-- 신규입력폼 -->
+		  <div class="form-group row">
+		    <div class="col-sm-7">
+		      <input type="text" class="form-control" id="input_job" placeholder="'할일(TODO)'을 입력 후 엔터키(Enter Key) 또는 등록 버튼을 클릭하세요" onkeyup="fn_enterKeyEvent()">
+		    </div>
+		    <div class="col-sm-3">
+		    	<button type="button" class="btn btn-danger" id="btn_register"><i class="fas fa-pencil-alt"></i> 등록</button>  
+		    </div>
+		    <div class="col-sm-2 text-right">
+		    	<button type="button" class="btn btn-primary" id="btn_refresh"><i class="fas fa-sync-alt"></i> 새로고침</button>  
+		    </div>
+		  </div>
+		  
+	      	
+	      <p/>	
+	      	
+	      <table class="table table-hover table-bordered">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th class="text-center" scope="col">id</th>
+			      <th class="text-center" scope="col">할일</th>
+			      <th class="text-center" scope="col">작성일시</th>
+			      <th class="text-center" scope="col">최종수정일시</th>
+			      <th class="text-center" scope="col">완료처리</th>
+			      <th class="text-center" scope="col">button</th>
+			    </tr>
+			  </thead>
+			  <tbody id="tbody_todo_list" />
+			</table>
+			
+			
+			
+			<!------------------------------ Pagination 영역---------------------------------------- -->
+			<div class="row">
+				
+				<div class="col-md-2 text-left">
+			      	<span class="text-info">
+			      		전체 <span id="result_count"></span>건
+			      		 (<span id="current_page"></span>/<span id="total_page"></span> page )
+			      	</span>
+			    </div>
+			    
+			    <div class="col-md-8 text-center">
+			    	<nav id="nav_pagination"></nav>	  
+			    </div>
+			    
+			    <div class="col-md-2 text-right">
+			    	  
+			    </div>
+		    </div>
+			
+			
+			
+	     
+		</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		<!-- javascript 영역 -->
+		<script src="/webjars/jquery/3.3.1-1/jquery.min.js"></script>
+		<script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+		
+		
+		<script type="text/javascript">
+			
+			// onload 이벤트
+			$(document).ready(function(){
+				
+				// 등록 버튼 onclick 이벤트
+				$("#btn_register").on('click', function(){ fn_register(); });
+				
+				// 새로고침 버튼 onclick 이벤트
+				$("#btn_refresh").on('click', function(){ fn_refresh(); });
+				
+				
+				// 초기데이터 로드
+				fn_refresh(1);
+				
+			});
+			
+			
+			
+			// TODO 리스트 등록
+			function fn_register(){
+				
+				// 1. validation
+				if( $("#input_job").val() == null || $("#input_job").val() == '' ){
+					alert('할일(TODO)의 내용을 입력 후 등록 버튼을 클릭하세요.');
+					$("#input_job").focus();
+					return false;
+				}
+				
+				// 2. REST API 호출 (POST)
+				$.ajax({
+					url 		:	"/todo",
+					method	: 	"post",
+					dataType	:	"json",
+					data		:	{ 
+							"job" 		:	$("#input_job").val()
+					},
+					success	:	function(data){
+						
+						// 1. 조회
+						fn_refresh(1);
+												
+						// 2. clear
+						$("#input_job").val(''); 
+						
+					},
+					error		:	function(request, status, error){
+						alert("[TODO LIST 등록 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+					}
+				});
+				
+			}
+			
+			
+			
+			// TODO 리스트 새로고침(조회)
+			function fn_refresh(page){
+				
+				// 0. 환경설정
+				var currentPage = 0;	// 현재페이지 값				
+				if( page != '' && page != null ){
+					currentPage = page-1;		// 페이지값이 0부터 시작되기 때문에 -1 한다.
+				}
+				
+				
+				// 1. REST API 호출 (GET)
+				$.ajax({
+					url 		:	"/todo",
+					method	: 	"get",
+					dataType	:	"json",
+					data		:	{
+						"size"		:	5,
+						"page"	:	currentPage
+					},
+					success	:	function(data){
+						
+							// ################################### 1. TBODY 영역 ###########################################
+							var todoListHtml = '';
+							
+							// 조회결과 있을 시(HTML생성)
+							$(data.content).each( function( i, item ){							
+								todoListHtml += makeToDoTrHtml(item);	// TR태그 HTML 생성										
+							});
+													
+							// 조회결과 없을 시(안내문구 생성)
+							if( data.totalElements == 0 ){
+								todoListHtml += "<tr height=100>";
+								todoListHtml += "	<td class='text-center text-danger' colspan='6' style='vertical-align:middle;'>조회결과가 없습니다.</td>";
+								todoListHtml += "</tr>";
+							}
+							
+							$("#tbody_todo_list").html(todoListHtml);	// 새로운 HTML 주입
+							// ############################################################################################
+							
+							
+							
+							// ################################### 2. 하단 페이징 영역 ###########################################
+							
+							// [LEFT] 전체건수
+							$("#result_count").html( data.totalElements );		// 전체 건수
+							$("#current_page").html( data.totalPages==0 ? 0 : data.number+1 );	// 현재페이지(조회 결과가 없을 경우 0으로 셋팅)
+							$("#total_page").html( data.totalPages );	// 전체페이지
+							
+							
+							// [CENTER] 페이징 HTML 생성
+							$("#nav_pagination").html( makeToDoNavHtml( data.first, data.last, data.number+1, data.totalPages ) );
+							
+							// ############################################################################################
+							
+						
+					},
+					error		:	function(request, status, error){
+						
+							alert("[TODO LIST 조회 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+						
+					}
+				}); // end ajax
+				
+				
+			}
+			
+			
+			
+			
+			// TR 태그 HTML 태그 동적 생성
+			function makeToDoTrHtml(json_data){
+				
+				var html = "";
+				
+				html += "<tr id=todo_tr_data_" + json_data.id + ">";
+				html += "		<th class='text-center' scope='row'>" + json_data.id + "</th>";
+				html += "		<td>" + json_data.job + "</td>";
+				html += "		<td class='text-center'>" + json_data.regDate + "</td>";
+				html += "		<td class='text-center'>" + json_data.fianlUpdateDate + "</td>";
+				html += "		<td class='text-center'>" + json_data.complete + "</td>";
+				html += "		<td class='text-center'>";
+				html += "			<button type='button' class='btn btn-outline-success btn-sm'><i class='fas fa-edit'></i> 수정</button>";
+				html += "			<button type='button' class='btn btn-outline-danger btn-sm'><i class='fas fa-trash-alt'></i> 삭제</button>";
+				html += "		</td>";
+				html += "</tr>";
+				
+				return html;
+			}
+			
+			// Pagination HTML 태그 동적 생성
+			function makeToDoNavHtml(first, last, curPage, totalPage){
+				
+				var html = "";
+				
+				html += "<ul class='pagination justify-content-center'>";
+				
+				if(first){
+					html += "		<li class='page-item'>";
+				}else{
+					html += "		<li class='page-item disabled'>";
+				}
+				
+				html += "			<a class='page-link' href='#'>Previous</a>";
+				html += "		</li>";
+				html += "		<li class='page-item'><a class='page-link' href='javascript:fn_refresh(1);'>1</a></li>";
+				
+				if(last){
+					html += "		<li class='page-item'>";
+				}else{
+					html += "		<li class='page-item disabled'>";
+				}
+				
+				html += "			<a class='page-link' href='#'>Next</a>";
+				html += "		</li>";
+				html += "</ul>";
+				
+				return html;
+				
+			}
+			
+			
+			
+			// 엔터키 이벤트 처리 함수
+			function fn_enterKeyEvent(){
+				if(event.keyCode == 13){
+					fn_register();	// 등록요청	
+				}
+			}
+		
+		</script>
+		
+		
+		
+	</body>
+
+
+
 </html>

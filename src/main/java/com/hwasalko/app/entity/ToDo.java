@@ -62,6 +62,8 @@ public class ToDo {
 	@NotNull
 	@Column(nullable = false)
 	private boolean complete;
+	
+	
 
 
 	
