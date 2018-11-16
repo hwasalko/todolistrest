@@ -255,8 +255,10 @@
 			// TODO 리스트 수정
 			function fn_update(id){
 				
+				var job = $("#update_job_val_" + id).val();
+				
 				// 1. confirm
-				if( !confirm( "해당 데이터를 수정하시겠습니까?\n\n[ID] : " + id + "\n[할일] : "  ) ){
+				if( !confirm( "해당 데이터를 수정하시겠습니까?\n\n[ID] : " + id + "\n[할일] : " + job  ) ){
 					return false;
 				}
 				
@@ -267,7 +269,7 @@
 					dataType	:	"json",
 					data		:	{ 
 							"id" 		:	id,
-							"job"		:	"수정된 할일"
+							"job"		:	job
 					},
 					success	:	function(data){
 						
@@ -288,40 +290,63 @@
 			// TODO 리스트 수정모드 변경
 			function fn_change_update_mode(btn_obj){
 				
-				// 1. 수정을 위해 기존 문구 획득
+				// 1. 수정을 위한 환경설정
 				var tr_obj = $(btn_obj).parents('tr');		// 버튼의 상위 tr 객체 select 
-				var td_job_obj = $(tr_obj).find('td[data-id=job]');  // data-id = job 인 td 객체 select
-				var td_button_obj = $(tr_obj).find('td[data-id=button]');  // data-id = button 인 td 객체 select
-				var tr_obj_org_html = $(tr_obj).html();	// 수정전 html (취소버튼 클릭 시 사용)
+				var td_job_obj = $(tr_obj).find("td[data-job]");  // 속성값이 data-job 인 td 객체 select
+				var td_button_obj = $(tr_obj).find("td[data-button]");  // 속성값이 data-button 인 td 객체 select
+				var id = $(tr_obj).find("th[data-id]").text();  // 속성값이 data-button 인 th 객체의 text
 				
 				
-				// 2. 입력 input 에 기존 문구 셋팅
-				$(tr_obj).addClass('table-warning');		// 색상변경
-				
-				var update_html = "<input type='text' class='form-control' value=" + $(td_job_obj).text() + ">";
+				// 2. 입력 input 에 기존 문구 셋팅				
+				$(tr_obj).addClass('table-warning');	// 색상변경						
+				var update_html = "<input type='text' class='form-control' id=update_job_val_"  + id +" value=" + $(td_job_obj).text() + ">";
 				$(td_job_obj).html(update_html);
+			
 				
 				// 3. 버튼변경
-				$(td_button_obj).html('');
+				$(td_button_obj).html( makeToDoUpdateBtnHtml(id) );
 				// 저장, 취소 이미지로 변경하는 부분 삽입...
 			}
 			
 			
 			
+			// TODO 리스트 수정모드 취소 처리
+			function fn_update_cancel( id ){
+				
+				// 1. REST API 호출 (GET)
+				$.ajax({
+					url 		:	"/todo/" + id,
+					method	: 	"get",
+					dataType	:	"json",
+					data		:	{ 
+							"id" 		:	id
+					},
+					success	:	function(data){
+						var orgHtml = makeToDoTdHtml(data);
+						$("tr#todo_tr_data_" + id).html( orgHtml );	// 원래의 html로 다시 drawing
+						$("tr#todo_tr_data_" + id).removeClass('table-warning');	// 색상변경 원복	
+					},
+					error		:	function(request, status, error){
+						alert("[TODO LIST 수정 취소 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+					}
+				});
+				
+				
+			}
 			
 			
 			
 			
 			// TR 태그 HTML 태그 동적 생성
 			function makeToDoTrHtml(json_data){
-				
+								
 				var html = "";
-				
+
 				html += "<tr id=todo_tr_data_" + json_data.id + ">";
-				html += "		<th class='text-center' scope='row'>" + json_data.id + "</th>";
-				html += "		<td data-id=job>" + json_data.job + "</td>";
-				html += "		<td class='text-center'>" + json_data.regDate + "</td>";
-				html += "		<td class='text-center'>" + json_data.finalUpdateDate + "</td>";
+				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
+				html += "		<td data-job>" + json_data.job + "</td>";
+				html += "		<td data-reg_date class='text-center'>" + json_data.regDate + "</td>";
+				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
 				
 				if( json_data.complete ){
 					html += "		<td class='text-center'>완료</td>";
@@ -329,15 +354,40 @@
 					html += "		<td class='text-center'>미완료</td>";
 				}
 				
-				html += "		<td class='text-center' data-id=button>";
+				html += "		<td class='text-center' data-button>";
 				html += "			<button type='button' class='btn btn-outline-success btn-sm' onclick='fn_change_update_mode(this)' ><i class='fas fa-edit'></i> 수정</button>";
-				html += "			<button type='button' class='btn btn-outline-danger btn-sm' onclick='fn_delete(" + json_data.id + ")'><i class='fas fa-trash-alt'></i> 삭제</button>";
+				html += "			<button type='button' class='btn btn-outline-danger btn-sm' onclick='fn_delete(" + json_data.id + ")'><i class='fas fa-trash'></i> 삭제</button>";
 				html += "		</td>";
 				html += "</tr>";
-				
+								
 				return html;
 			}
 			
+			
+			
+			// TD 태그 HTML 태그 동적 생성 (1건의 TODO 정보 다시 조회할 때 호출)
+			function makeToDoTdHtml(json_data){
+								
+				var html = "";
+
+				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
+				html += "		<td data-job>" + json_data.job + "</td>";
+				html += "		<td data-reg_date class='text-center'>" + json_data.regDate + "</td>";
+				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
+				
+				if( json_data.complete ){
+					html += "		<td class='text-center'>완료</td>";
+				}else{
+					html += "		<td class='text-center'>미완료</td>";
+				}
+				
+				html += "		<td class='text-center' data-button>";
+				html += "			<button type='button' class='btn btn-outline-success btn-sm' onclick='fn_change_update_mode(this)' ><i class='fas fa-edit'></i> 수정</button>";
+				html += "			<button type='button' class='btn btn-outline-danger btn-sm' onclick='fn_delete(" + json_data.id + ")'><i class='fas fa-trash'></i> 삭제</button>";
+				html += "		</td>";
+								
+				return html;
+			}
 			
 			
 			
@@ -370,6 +420,17 @@
 				
 				return html;
 				
+			}
+			
+			// 수정버튼 HTML 태그 동적 생성
+			function makeToDoUpdateBtnHtml(id, org_html){
+				
+				var html = "";
+				
+				html += "			<button type='button' class='btn btn-success btn-sm' onclick='fn_update(" + id + ")' ><i class='fas fa-save'></i> 저장</button>";
+				html += "			<button type='button' class='btn btn-danger btn-sm' onclick='fn_update_cancel(" + id + ")'><i class='fas fa-ban'></i> 취소</button>";
+				
+				return html;
 			}
 			
 			
