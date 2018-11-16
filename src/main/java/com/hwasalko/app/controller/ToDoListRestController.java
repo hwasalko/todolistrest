@@ -89,16 +89,13 @@ public class ToDoListRestController {
 			@Valid ToDo toDo) 
 	{
 		
-		log.info(" toDo.toString() " + toDo.toString() );
-		
 		// DB의 객체를 불러와 필요한 부분 수정함
-//		ToDo updateToDo = toDoListRepasitoy.getOne(id);		
-//		updateToDo.setJob(toDo.getJob()); 						// 할일		
-//		ToDo toDoData = toDoListRepasitoy.save(updateToDo);	// DB Update
+		ToDo updateToDo = toDoListRepasitoy.getOne(id);		
+		updateToDo.setJob(toDo.getJob()); 						// 할일		
+		ToDo toDoData = toDoListRepasitoy.save(updateToDo);	// DB Update
 		
-//		return toDoData;
+		return toDoData;
 		
-		return toDoListRepasitoy.save(toDo);	// DB Update
 	}
 	
 }
