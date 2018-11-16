@@ -56,7 +56,6 @@ public class ToDoListRestController {
 			)	
 	{	
 
-		log.debug("[pageable] " + pageable.toString() );
 		Page<ToDo> toDoList = toDoListRepasitoy.findAll(pageable);
 
 		return toDoList;

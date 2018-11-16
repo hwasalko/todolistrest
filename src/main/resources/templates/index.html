@@ -168,7 +168,7 @@
 					method	: 	"get",
 					dataType	:	"json",
 					data		:	{
-						"size"		:	5,
+						"size"		:	3,
 						"page"	:	currentPage
 					},
 					success	:	function(data){
@@ -321,12 +321,16 @@
 							"id" 		:	id
 					},
 					success	:	function(data){
+						
 						var orgHtml = makeToDoTdHtml(data);
 						$("tr#todo_tr_data_" + id).html( orgHtml );	// 원래의 html로 다시 drawing
 						$("tr#todo_tr_data_" + id).removeClass('table-warning');	// 색상변경 원복	
+					
 					},
 					error		:	function(request, status, error){
+					
 						alert("[TODO LIST 수정 취소 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+					
 					}
 				});
 				
@@ -397,24 +401,43 @@
 				
 				html += "<ul class='pagination justify-content-center'>";
 				
-				if(first){
+				// 처음으로 버튼
+				if( !first ){ 
 					html += "		<li class='page-item'>";
+					html += "			<a class='page-link' href='javascript:fn_refresh(1)'>First</a>";
+					html += "		</li>";
 				}else{
 					html += "		<li class='page-item disabled'>";
+					html += "			<a class='page-link' href='#'>First</a>";
+					html += "		</li>";
 				}
 				
-				html += "			<a class='page-link' href='#'>Previous</a>";
-				html += "		</li>";
-				html += "		<li class='page-item'><a class='page-link' href='javascript:fn_refresh(1);'>1</a></li>";
+				// page번호
+				for(i=1 ; i <= totalPage ; i++ ){
+					
+					if( i == curPage ){ // 현재페이지
+						html += "		<li class='page-item active'>";
+					}else{
+						html += "		<li class='page-item'>";
+					}
+					
+					html += "				<a class='page-link' href='javascript:fn_refresh(" + i + ");'>" + i+ "</a>";
+					html += "			</li>";
+				}
 				
-				if(last){
+				
+				// 마지막으로 버튼
+				if( !last ){ 
 					html += "		<li class='page-item'>";
+					html += "			<a class='page-link' href='javascript:fn_refresh(" + totalPage + ")'>Last</a>";
+					html += "		</li>";
 				}else{
 					html += "		<li class='page-item disabled'>";
+					html += "			<a class='page-link' href='#'>Last</a>";
+					html += "		</li>";
 				}
 				
-				html += "			<a class='page-link' href='#'>Next</a>";
-				html += "		</li>";
+				
 				html += "</ul>";
 				
 				return html;
