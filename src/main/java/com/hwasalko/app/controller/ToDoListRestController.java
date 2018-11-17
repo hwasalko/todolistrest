@@ -1,9 +1,11 @@
 package com.hwasalko.app.controller;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hwasalko.app.entity.ToDo;
+import com.hwasalko.app.entity.ToDoRef;
 
 import lombok.extern.slf4j.Slf4j;
 
 import com.hwasalko.app.dao.ToDoListRepasitoy;
+import com.hwasalko.app.dao.ToDoRefListRepasitoy;
 
 /**
  * 
@@ -36,21 +40,31 @@ public class ToDoListRestController {
 	@Autowired
 	private ToDoListRepasitoy toDoListRepasitoy;
 
+	@Autowired
+	private ToDoRefListRepasitoy toDoRefListRepasitoy;
 	
 	// todo 등록(insert) API (methoed = POST)
-	@PostMapping("/todo")
+	@PostMapping("/todos")
 	public ToDo add(
-			@Valid ToDo toDo) 
+			@Valid ToDo toDo,
+			ToDoRef toDoRef) 
 	{
+		log.info("****** toDo => " + toDo.toString());
+		log.info("****** toDoRef => " + toDoRef.toString());
+		
 		
 		ToDo toDoData = toDoListRepasitoy.save(toDo);	// DB insert
 
+		toDoRef.setMyId(toDoData.getId());
+		toDoRefListRepasitoy.save(toDoRef);
+		
+		
 		return toDoData;
 	}
 
 	// todo 조회(select) API (method = GET)
 	// 페이징 처리를 위해 Pagination 정보를 포함하여 리턴
-	@GetMapping("todo")
+	@GetMapping("/todos")
 	public Page<ToDo> list(
 				@PageableDefault(sort = { "id" }, direction = Direction.ASC, size=5) Pageable pageable // 기본 페이징 정보 
 			)	
@@ -62,7 +76,7 @@ public class ToDoListRestController {
 	}
 	
 	// todo 상세조회(select) API (method = GET)
-	@GetMapping("/todo/{id}")
+	@GetMapping("/todos/{id}")
 	public Optional<ToDo> view(@PathVariable int id) {
 
 		Optional<ToDo> toDo = toDoListRepasitoy.findById(id);
@@ -72,7 +86,7 @@ public class ToDoListRestController {
 
 	
 	// todo 삭제 API (Method = DELETE)
-	@DeleteMapping("/todo/{id}")
+	@DeleteMapping("/todos/{id}")
 	public boolean delete(@PathVariable int id) {
 		toDoListRepasitoy.deleteById(id);
 		return true;
@@ -82,7 +96,7 @@ public class ToDoListRestController {
 	
 	
 	// todo 수정(Update) API (Method = PUT)
-	@PutMapping("/todo/{id}")
+	@PutMapping("/todos/{id}")
 	public ToDo edit(
 			@PathVariable int id, 
 			@Valid ToDo toDo) 

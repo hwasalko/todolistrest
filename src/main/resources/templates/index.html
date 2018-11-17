@@ -139,11 +139,13 @@
 				
 				// 2. REST API 호출 (POST)
 				$.ajax({
-					url 		:	"/todo",
+					url 		:	"/todos",
 					method	: 	"post",
 					dataType	:	"json",
 					data		:	{ 
 							"job" 		:	$("#input_job").val()
+							//"myId" : 1,
+							//"refId" : 1
 					},
 					success	:	function(data){
 						
@@ -175,7 +177,7 @@
 				
 				// 1. REST API 호출 (GET)
 				$.ajax({
-					url 		:	"/todo",
+					url 		:	"/todos",
 					method	: 	"get",
 					dataType	:	"json",
 					data		:	{
@@ -240,7 +242,7 @@
 				
 				// 2. REST API 호출 (POST)
 				$.ajax({
-					url 		:	"/todo/" + id,
+					url 		:	"/todos/" + id,
 					method	: 	"delete",
 					dataType	:	"json",
 					data		:	{ 
@@ -250,17 +252,8 @@
 						
 						alert('정상적으로 삭제 되었습니다.');
 						
-						
-						// 마지막 페이지에서 1건의 레코드만 있을 경우 삭제 후 현재페이지번호를 -1 처리해줘야 함
-						var page_block_count = $("#select_pageblock_count option:selected").val();
-						var cur_page_no = $("#paging_cur_page_no").text();
-						
-						if( page_block_count % cur_page_no == 0 ){
-							cur_page_no = cur_page_no-1;
-						}
-											
-						
 						// 조회
+						var cur_page_no = $("#paging_cur_page_no").text();
 						fn_refresh( cur_page_no );	// 원래 페이지로 이동												
 							
 					},
@@ -284,7 +277,7 @@
 				
 				// 2. REST API 호출 (POST)
 				$.ajax({
-					url 		:	"/todo/" + id,
+					url 		:	"/todos/" + id,
 					method	: 	"put",
 					dataType	:	"json",
 					data		:	{ 
@@ -334,7 +327,7 @@
 				
 				// 1. REST API 호출 (GET)
 				$.ajax({
-					url 		:	"/todo/" + id,
+					url 		:	"/todos/" + id,
 					method	: 	"get",
 					dataType	:	"json",
 					data		:	{ 

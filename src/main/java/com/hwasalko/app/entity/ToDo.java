@@ -1,11 +1,16 @@
 package com.hwasalko.app.entity;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,6 +42,10 @@ public class ToDo {
 	@GeneratedValue
 	private int id;
 
+	
+	// 할일(Todo)의 참조 Id 
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="myId")	// 여러 할일을 참조할 수 있으니 1:N 관계로 설정
+	private Collection<ToDoRef> toDoRefs;
 	
 	// 할일 (text)
 	@NotNull
