@@ -63,18 +63,29 @@
 			<!------------------------------ Pagination 영역---------------------------------------- -->
 			<div class="row">
 				
-				<div class="col-md-2 text-left">
+				<div class="col-md-3 text-left">
 			      	<span class="text-info">
 			      		전체 <span id="result_count"></span>건
 			      		 (<span id="current_page"></span>/<span id="total_page"></span> page )
 			      	</span>
+			      	
+			      	<select id="select_pageblock_count" onchange="fn_refresh(1);">
+			      		<option value="3">3건</option>
+			      		<option value="5" selected>5건</option>
+			      		<option value="10">10건</option>
+			      		<option value="20">20건</option>
+			      		<option value="50">50건</option>
+			      		<option value="100">100건</option>
+			      		<option value="1000">1000건</option>
+			      	</select>
+			      	
 			    </div>
 			    
-			    <div class="col-md-8 text-center">
+			    <div class="col-md-6 text-center">
 			    	<nav id="nav_pagination"></nav>	  
 			    </div>
 			    
-			    <div class="col-md-2 text-right">
+			    <div class="col-md-3 text-right">
 			    	  
 			    </div>
 		    </div>
@@ -106,7 +117,7 @@
 				$("#btn_register").on('click', function(){ fn_register(); });
 				
 				// 새로고침 버튼 onclick 이벤트
-				$("#btn_refresh").on('click', function(){ fn_refresh(); });
+				$("#btn_refresh").on('click', function(){ fn_refresh( 1 ); });	// 1페이지로 이동
 				
 				
 				// 초기데이터 로드
@@ -168,7 +179,7 @@
 					method	: 	"get",
 					dataType	:	"json",
 					data		:	{
-						"size"		:	3,
+						"size"		:	$("#select_pageblock_count option:selected").val() ,
 						"page"	:	currentPage
 					},
 					success	:	function(data){
@@ -202,7 +213,7 @@
 							
 							
 							// [CENTER] 페이징 HTML 생성
-							$("#nav_pagination").html( makeToDoNavHtml( data.first, data.last, data.number+1, data.totalPages ) );
+							$("#nav_pagination").html( makeToDoNavHtml( data ) );
 							
 							// ############################################################################################
 							
@@ -214,7 +225,6 @@
 						
 					}
 				}); // end ajax
-				
 				
 			}
 			
@@ -240,8 +250,18 @@
 						
 						alert('정상적으로 삭제 되었습니다.');
 						
-						// 1. 조회
-						fn_refresh(1);												
+						
+						// 마지막 페이지에서 1건의 레코드만 있을 경우 삭제 후 현재페이지번호를 -1 처리해줘야 함
+						var page_block_count = $("#select_pageblock_count option:selected").val();
+						var cur_page_no = $("#paging_cur_page_no").text();
+						
+						if( page_block_count % cur_page_no == 0 ){
+							cur_page_no = cur_page_no-1;
+						}
+											
+						
+						// 조회
+						fn_refresh( cur_page_no );	// 원래 페이지로 이동												
 							
 					},
 					error		:	function(request, status, error){
@@ -275,7 +295,7 @@
 						alert('정상적으로 수정 되었습니다.');
 						
 						// 1. 조회
-						fn_refresh(1);												
+						fn_refresh( $("#paging_cur_page_no").text() );	// 수정 후 원레 페이지번호로 새로고침												
 							
 					},
 					error		:	function(request, status, error){
@@ -394,55 +414,79 @@
 			
 			
 			
-			// Pagination HTML 태그 동적 생성
-			function makeToDoNavHtml(first, last, curPage, totalPage){
+			// Pagination HTML 태그 동적 생성 (페이징 영역)
+			//  - 대부분의 페이징 값들은 서버에서 JSON으로 넘어온 Pageable 객체 값을 사용하고 일부만 계산하여 사용
+			function makeToDoNavHtml(data){
 				
+				// 초기화
+				var pagecount_per_block = 10;			// 블럭 당 페이징 갯수(상수로 선언하여 사용...)
+				
+				var total_count = data.totalElements;	// 전체 조회건수
+				var current_page = data.number +1;	// 현재 페이지번호
+				var total_page = data.totalPages;			// 전체 페이지번호
+				//var is_first_page = data.first;				// 첫번째 페이지 여부
+				//var is_last_page = data.last;				// 마지막 페이지 여부
+				
+				var total_block_count = Math.floor( total_page / pagecount_per_block ) + 1;		// 전체 블럭갯수
+				var current_block = Math.floor( (current_page-1) / pagecount_per_block ) +1;		// 현재 블럭번호
+				
+				var is_first_page_block = current_block == 1 ? true : false;						// 첫번째 블럭 여부
+				var is_last_page_block = current_block == total_block_count ? true : false;	// 마지막 블럭 여부
+				
+				var start_page_idx = (  (current_block-1) * pagecount_per_block  ) + 1;				// 시작 페이지번호
+				var end_page_idx;																				//종료 페이지번호
+				
+				if( is_last_page_block ){	// 마지막 페이지일 경우
+					end_page_idx = ( (current_block-1) * pagecount_per_block ) + ( total_page % pagecount_per_block );	
+				}else{
+					end_page_idx = ( (current_block-1) * pagecount_per_block ) + pagecount_per_block;	
+				}
+				
+				
+				
+				
+				//------------------- 페이징 HTML 생성 -----------------------------------------------------------------------------------------
 				var html = "";
 				
 				html += "<ul class='pagination justify-content-center'>";
 				
-				// 처음으로 버튼
-				if( !first ){ 
-					html += "		<li class='page-item'>";
-					html += "			<a class='page-link' href='javascript:fn_refresh(1)'>First</a>";
-					html += "		</li>";
+				// 이전 버튼
+				if( is_first_page_block ){ 
+					html += "		<li class='page-item disabled'><a class='page-link'>Previous</a></li>";
 				}else{
-					html += "		<li class='page-item disabled'>";
-					html += "			<a class='page-link' href='#'>First</a>";
-					html += "		</li>";
+					html += "		<li class='page-item'><a class='page-link' onclick='fn_refresh(" + ( ( (current_block-2) * pagecount_per_block) +1) + ")'>Previous</a></li>";
 				}
 				
 				// page번호
-				for(i=1 ; i <= totalPage ; i++ ){
+				for( i = start_page_idx ; i <= end_page_idx ; i++ ){
 					
-					if( i == curPage ){ // 현재페이지
-						html += "		<li class='page-item active'>";
+					if( i == current_page ){ // 현재페이지
+						html += "		<li class='page-item active'><a id='paging_cur_page_no' class='page-link' onclick='fn_refresh(" + i + ");'>" + i+ "</a></li>";
 					}else{
-						html += "		<li class='page-item'>";
+						html += "		<li class='page-item'><a class='page-link' onclick='fn_refresh(" + i + ");'>" + i+ "</a></li>";
 					}
-					
-					html += "				<a class='page-link' href='javascript:fn_refresh(" + i + ");'>" + i+ "</a>";
-					html += "			</li>";
 				}
 				
 				
-				// 마지막으로 버튼
-				if( !last ){ 
-					html += "		<li class='page-item'>";
-					html += "			<a class='page-link' href='javascript:fn_refresh(" + totalPage + ")'>Last</a>";
-					html += "		</li>";
+				// 다음 버튼
+				if( is_last_page_block ){ 
+					html += "		<li class='page-item disabled'><a class='page-link'>Next</a></li>";
 				}else{
-					html += "		<li class='page-item disabled'>";
-					html += "			<a class='page-link' href='#'>Last</a>";
-					html += "		</li>";
+					html += "		<li class='page-item'><a class='page-link' onclick='fn_refresh(" + (end_page_idx+1) + ")'>Next</a></li>";
 				}
 				
 				
 				html += "</ul>";
 				
+				//------------------- 페이징 HTML 종료 -----------------------------------------------------------------------------------------
+				
+				
 				return html;
 				
 			}
+			
+			
+			
 			
 			// 수정버튼 HTML 태그 동적 생성
 			function makeToDoUpdateBtnHtml(id, org_html){
