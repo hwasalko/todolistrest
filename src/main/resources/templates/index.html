@@ -26,33 +26,63 @@
 		    <hr>  
 		  
 		  
+		  
+		 
+		  
 	      
 	      <!-- 신규입력폼 -->
-		  <div class="form-group row">
-		    <div class="col-sm-7">
-			      <input type="text" class="form-control"  id="input_job" placeholder="'할일(TODO)'을 입력 후 엔터키(Enter Key) 또는 등록 버튼을 클릭하세요" onkeyup="fn_enterKeyEvent()">
-			      <small id="input_job_help" class="form-text text-muted">엔터키로 입력 가능합니다.</small>
-		    </div>
-		    <div class="col-sm-3">
-		    	<button type="button" class="btn btn-danger" id="btn_register"><i class="fas fa-pencil-alt"></i> 등록</button>  
-		    </div>
-		    <div class="col-sm-2 text-right">
-		    	<button type="button" class="btn btn-primary" id="btn_refresh"><i class="fas fa-sync-alt"></i> 새로고침</button>  
-		    </div>
+	      <div class="card">
+	      
+	      	<div class="card-body">
+	      	
+				  	<div class="form-group row">
+				  
+				  		<div class="col-sm-7">
+					  		  <input type="text" class="form-control"  id="input_job" placeholder="'할일(TODO)을 입력 후 Enter 또는 신규등록 버튼을 클릭하세요" onkeyup="fn_enterKeyEvent()" >
+					    </div>
+				  		
+				  		<div class="col-sm-3">
+					    	  <div class="input-group">
+					    	  		<div class="input-group-prepend">
+					    	  			<span class="input-group-text">@</span>
+					    	  		</div>
+							  		<input type="text" class="form-control text-danger"  id="input_ref_jobs" placeholder="참조 ID 선택" readonly>
+							  		<div class="input-group-append">
+							  			<button class="btn btn-secondary" onclick="fn_showModal('input_ref_jobs')"><i class="fas fa-search"></i></button>
+							  		</div>
+							  </div>
+					    </div>
+					    
+					  	
+					    <div class="col-sm-2 text-right">
+					    	<button type="button" class="btn btn-danger" id="btn_register"><i class="fas fa-pencil-alt"></i> 신규등록</button>  
+					    </div>
+					    
+				  	</div>
+		  	</div>
+		  	
 		  </div>
 		  
+		  
+		  <p/>	
+		  
+		  <div class="form-group row">
+		  		<div class="col-sm-12 text-right">
+			    	<button type="button" class="btn btn-info btn-sm" id="btn_refresh"><i class="fas fa-sync-alt"></i> 새로고침</button>  
+			    </div>
+		  </div>
 	      	
 	      <p/>	
 	      	
 	      <table class="table table-hover table-bordered">
 			  <thead class="thead-dark">
 			    <tr>
-			      <th class="text-center" scope="col">id</th>
+			      <th class="text-center" scope="col" width="5%">id</th>
 			      <th class="text-center" scope="col">할일</th>
-			      <th class="text-center" scope="col">작성일시</th>
-			      <th class="text-center" scope="col">최종수정일시</th>
-			      <th class="text-center" scope="col">완료처리</th>
-			      <th class="text-center" scope="col">button</th>
+			      <th class="text-center" scope="col" width="18%">작성일시</th>
+			      <th class="text-center" scope="col" width="18%">최종수정일시</th>
+			      <th class="text-center" scope="col" width="10%">완료처리</th>
+			      <th class="text-center" scope="col" width="15%">button</th>
 			    </tr>
 			  </thead>
 			  <tbody id="tbody_todo_list" />
@@ -100,6 +130,48 @@
 	
 	
 	
+		<!-- 참조ID 선택 모달창 -->
+		<div class="modal fade refSearchModal"  id="refIdModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+			  
+			  <div class="modal-dialog modal-lg">
+				    
+				    <div class="modal-content">
+				    
+				      	  <div class="modal-header">
+						        <h5 class="modal-title">참조 ID 선택</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+					      </div>
+					      
+					      <div class="modal-body">
+					        	<table class="table table-hover table-bordered table-sm">
+								  <thead class="thead-dark">
+									    <tr>
+									    	  <th class="text-center" scope="col" width="10%">check</th>
+										      <th class="text-center" scope="col" width="10%">id</th>
+										      <th class="text-center" scope="col">할일</th>
+										      <th class="text-center" scope="col" width="20%">완료처리</th>
+									    </tr>
+								  </thead>
+								  <tbody id="tbody_modal_todo_list" />
+								</table>
+					      </div>
+					      
+					      <div class="modal-footer">
+					      		<button type="button" class="btn btn-primary btn-sm" onclick="fn_sendCheckedVal()">선택완료</button>
+						        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">닫기</button>
+					      </div>
+				
+							<!-- 팝업창 결과값 주입 객체 ID -->
+							<input type="hidden" id="modal_hidden_return_object_id" value=""/>
+				    
+				    </div>
+			  
+			  </div>
+		</div>
+	
+	
 	
 	
 	
@@ -143,9 +215,8 @@
 					method	: 	"post",
 					dataType	:	"json",
 					data		:	{ 
-							"job" 		:	$("#input_job").val()
-							//"myId" : 1,
-							//"refId" : 1
+							"job" 		:	$("#input_job").val(),
+							"refIds" : $("#input_ref_jobs").val()
 					},
 					success	:	function(data){
 						
@@ -154,6 +225,7 @@
 												
 						// 2. clear
 						$("#input_job").val(''); 
+						$("#input_ref_jobs").val('');
 						
 					},
 					error		:	function(request, status, error){
@@ -268,10 +340,17 @@
 			// TODO 리스트 수정
 			function fn_update(id){
 				
-				var job = $("#update_job_val_" + id).val();
+				var job = $("#update_job_val_" + id).val();			// 할일
+				
+				// 1. validation
+				if( job == null || job == '' ){
+					alert('할일(TODO)의 내용을 입력 후 저장 버튼을 클릭하세요.');
+					$("#update_job_val_" + id).focus();
+					return false;
+				}
 				
 				// 1. confirm
-				if( !confirm( "해당 데이터를 수정하시겠습니까?\n\n[ID] : " + id + "\n[할일] : " + job  ) ){
+				if( !confirm( "해당 데이터를 수정하시겠습니까?\n\n[ID] : " + id + "\n[할일] : " + job) ){
 					return false;
 				}
 				
@@ -309,9 +388,12 @@
 				var id = $(tr_obj).find("th[data-id]").text();  // 속성값이 data-button 인 th 객체의 text
 				
 				
-				// 2. 입력 input 에 기존 문구 셋팅				
-				$(tr_obj).addClass('table-warning');	// 색상변경						
-				var update_html = "<input type='text' class='form-control' id=update_job_val_"  + id +" value=" + $(td_job_obj).text() + ">";
+				// 2. 입력 input 에 기존 문구 셋팅	
+				$(tr_obj).addClass('table-warning');	// 색상변경	
+				
+				var update_html = "";
+
+				update_html += "<input type='text' class='form-control' id=update_job_val_"  + id +" value=" + $(td_job_obj).find(".job_nm").text() + "> ";
 				$(td_job_obj).html(update_html);
 			
 				
@@ -330,9 +412,6 @@
 					url 		:	"/todos/" + id,
 					method	: 	"get",
 					dataType	:	"json",
-					data		:	{ 
-							"id" 		:	id
-					},
 					success	:	function(data){
 						
 						var orgHtml = makeToDoTdHtml(data);
@@ -360,7 +439,13 @@
 
 				html += "<tr id=todo_tr_data_" + json_data.id + ">";
 				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
-				html += "		<td data-job>" + json_data.job + "</td>";
+				
+				html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				$(json_data.toDoRefs).each( function( i, item ){			// 참조하는 ID가 있을 경우 표시
+					html += " <span class='badge badge-warning'>@" + item.refId + "</span>";
+				});
+				html += "		</td>";
+				
 				html += "		<td data-reg_date class='text-center'>" + json_data.regDate + "</td>";
 				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
 				
@@ -387,7 +472,13 @@
 				var html = "";
 
 				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
-				html += "		<td data-job>" + json_data.job + "</td>";
+				
+				html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				$(json_data.toDoRefs).each( function( i, item ){			// 참조하는 ID가 있을 경우 표시
+					html += " <span class='badge badge-warning'>@" + item.refId + "</span>";
+				});
+				html += "		</td>";
+				
 				html += "		<td data-reg_date class='text-center'>" + json_data.regDate + "</td>";
 				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
 				
@@ -500,6 +591,107 @@
 					fn_register();	// 등록요청	
 				}
 			}
+			
+			
+			// 참조 ID 선택버튼 클릭 시(모달창)
+			function fn_showModal( return_object_id ){
+				$('#refIdModal').modal('show');
+				fn_all_todo_list_modal(return_object_id);
+			}
+			
+			
+			
+			// 모달창 TODO 리스트(조회)
+			function fn_all_todo_list_modal(return_object_id) {
+				
+				// 1. REST API 호출 (GET)
+				$.ajax({
+					url 		:	"/todos/all",
+					method	: 	"get",
+					dataType	:	"json",
+					success	:	function(data){
+						
+						var arr_selected_ref_ids = $("#" + return_object_id).val().split(',');		// 이미 선택된 값
+						
+						
+							// ################################### 1. TBODY 영역 ###########################################
+							var todoListHtml = '';
+							
+							// 조회결과 있을 시(HTML생성)
+							$(data).each( function( i, item ){		
+								
+								todoListHtml += "<tr>";
+								
+								todoListHtml += "	<th class='text-center bg-warning'>";
+								if( arr_selected_ref_ids.indexOf( String(item.id) ) >= 0 ){
+									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "' checked>";
+								}else{
+									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "'>";
+								}
+								todoListHtml += "	</th>";
+								
+								todoListHtml += "	<td class='text-center'>" + item.id + "</td>";
+								todoListHtml += "	<td >" + item.job + "</td>";
+								if(item.complete){
+									todoListHtml += "	<td class='text-center'>완료</td>";
+								}else{
+									todoListHtml += "	<td class='text-center'>미완료</td>";
+								}
+								
+								todoListHtml += "</tr>";
+														
+							});
+													
+							// 조회결과 없을 시(안내문구 생성)
+							if( data.length == 0 ){
+								todoListHtml += "<tr height=100>";
+								todoListHtml += "	<td class='text-center text-danger' colspan='4' style='vertical-align:middle;'>조회결과가 없습니다.</td>";
+								todoListHtml += "</tr>";
+							}
+							
+							$("#tbody_modal_todo_list").html(todoListHtml);	// 새로운 HTML 주입
+							
+							
+							$("#modal_hidden_return_object_id").val(return_object_id);	// 결과를 돌려보낼 object_id 명 hidden 객체에 저장
+							// ############################################################################################
+							
+						
+					},
+					error		:	function(request, status, error){
+						
+							alert("[TODO LIST 모달창 조회 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+						
+					}
+				}); // end ajax
+				
+			} // end function
+			
+			
+			
+			// 모달창 '저장' 버튼 클릭 시(부모창으로 선택 ID 전송) 
+			function fn_sendCheckedVal(){
+				
+				var result = "";
+				
+				$('input[name=chk_modal_ref_ids]:checked').each(function(index, item){
+					if(index != 0){
+						result += ',';
+					}
+					result += item.value;
+				});
+				
+				
+				
+				// 부모창에 결과 입력
+				var return_object_id = $("#modal_hidden_return_object_id").val();
+				$("#" + return_object_id).val(result);
+				
+				// 창닫기
+				$('#refIdModal').modal('hide');
+				
+			}
+			
+			
 		
 		</script>
 		

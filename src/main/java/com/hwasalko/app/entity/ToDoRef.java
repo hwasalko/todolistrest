@@ -1,11 +1,13 @@
 package com.hwasalko.app.entity;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -20,19 +22,30 @@ import lombok.Data;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class ToDoRef {
 		
-	// pk(seq)
+	
+	
+	// PK
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.IDENTITY) 
 	private int seq;
 	
 	
-	// 참조자(자신)의 id	
+	//참조자 ID
 	private int myId;
 	
-	// 참조대상 할일 id
+	
+	// 참조대상 ID
 	private int refId;
+	
+	
+	// 생성자
+	public ToDoRef(int myId, int refId ) {
+		this.myId = myId;
+		this.refId = refId;
+	}
 	
 	
 
