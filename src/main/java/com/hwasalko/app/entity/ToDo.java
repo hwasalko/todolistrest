@@ -86,11 +86,6 @@ public class ToDo {
 		return toDoRefs.add(t);
 	}
 	
-	
-	// 제거 매소드
-	public boolean removeToDoRef(ToDoRef t){
-		return toDoRefs.remove(t);
-	}
 
 	
 

@@ -322,7 +322,11 @@
 					},
 					success	:	function(data){
 						
-						alert('정상적으로 삭제 되었습니다.');
+						alert( data.msg );
+						
+						if( !data.result ){
+							return false;	
+						}
 						
 						// 조회
 						var cur_page_no = $("#paging_cur_page_no").text();
@@ -364,7 +368,11 @@
 					},
 					success	:	function(data){
 						
-						alert('정상적으로 수정 되었습니다.');
+						alert( data.msg );
+						
+						if( !data.result ){
+							return false;	
+						}
 						
 						// 1. 조회
 						fn_refresh( $("#paging_cur_page_no").text() );	// 수정 후 원레 페이지번호로 새로고침												
@@ -440,7 +448,11 @@
 				html += "<tr id=todo_tr_data_" + json_data.id + ">";
 				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
 				
-				html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				if( json_data.complete ){
+					html += "		<td data-job><del><span class='job_nm'>" + json_data.job + "</span></del>";	
+				}else{
+					html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				}
 				$(json_data.toDoRefs).each( function( i, item ){			// 참조하는 ID가 있을 경우 표시
 					html += " <span class='badge badge-warning'>@" + item.refId + "</span>";
 				});
@@ -450,9 +462,9 @@
 				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
 				
 				if( json_data.complete ){
-					html += "		<td class='text-center'>완료</td>";
+					html += "		<td class='text-center'><i class='far fa-check-square fa-2x'></i></td>";
 				}else{
-					html += "		<td class='text-center'>미완료</td>";
+					html += "		<td class='text-center'><i class='far fa-square fa-2x' style='cursor: pointer;' onclick='fn_complete(" + json_data.id + ")'></i></td>";
 				}
 				
 				html += "		<td class='text-center' data-button>";
@@ -473,7 +485,11 @@
 
 				html += "		<th data-id class='text-center' scope='row'>" + json_data.id + "</th>";
 				
-				html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				if( json_data.complete ){
+					html += "		<td data-job><del><span class='job_nm'>" + json_data.job + "</span></del>";	
+				}else{
+					html += "		<td data-job><span class='job_nm'>" + json_data.job + "</span>";
+				}
 				$(json_data.toDoRefs).each( function( i, item ){			// 참조하는 ID가 있을 경우 표시
 					html += " <span class='badge badge-warning'>@" + item.refId + "</span>";
 				});
@@ -481,11 +497,11 @@
 				
 				html += "		<td data-reg_date class='text-center'>" + json_data.regDate + "</td>";
 				html += "		<td data-final_update_date class='text-center'>" + json_data.finalUpdateDate + "</td>";
-				
+								
 				if( json_data.complete ){
-					html += "		<td class='text-center'>완료</td>";
+					html += "		<td class='text-center'><i class='far fa-check-square fa-2x'></i></td>";
 				}else{
-					html += "		<td class='text-center'>미완료</td>";
+					html += "		<td class='text-center'><i class='far fa-square fa-2x' style='cursor: pointer;' onclick='fn_complete(" + json_data.id + ")'></i></td>";
 				}
 				
 				html += "		<td class='text-center' data-button>";
@@ -585,6 +601,41 @@
 			
 			
 			
+			// TODO 리스트 완료처리
+			function fn_complete(id){
+				
+				// 1. confirm
+				if( !confirm( "해당 데이터를 완료로 처리하시겠습니까?") ){
+					return false;
+				}
+				
+				// 2. REST API 호출 (POST)
+				$.ajax({
+					url 		:	"/todos/" + id,
+					method	: 	"patch",
+					dataType	:	"json",
+					success	:	function(data){
+						
+						alert( data.msg );
+						
+						if( !data.result ){
+							return false;
+						}
+						
+						// 1. 조회
+						fn_refresh( $("#paging_cur_page_no").text() );	// 수정 후 원레 페이지번호로 새로고침												
+							
+					},
+					error		:	function(request, status, error){
+						alert("[TODO LIST 완료처리 중 에러 발생] code : " + request.status + "\n" + "message : " + request.responseText + "\n" + "error : " + error);
+					}
+				});
+				
+			}
+			
+			
+			
+			
 			// 엔터키 이벤트 처리 함수
 			function fn_enterKeyEvent(){
 				if(event.keyCode == 13){
@@ -620,22 +671,24 @@
 							// 조회결과 있을 시(HTML생성)
 							$(data).each( function( i, item ){		
 								
-								todoListHtml += "<tr>";
+								todoListHtml += "<tr " + (item.complete ? "class='table-warning'" : "") + ">";
 								
-								todoListHtml += "	<th class='text-center bg-warning'>";
+								todoListHtml += "	<th class='text-center'>";
 								if( arr_selected_ref_ids.indexOf( String(item.id) ) >= 0 ){
-									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "' checked>";
+									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "' checked" + (item.complete ? "disabled" : "") + ">";
 								}else{
-									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "'>";
+									todoListHtml += "		<input type='checkbox' name='chk_modal_ref_ids' value='" + item.id + "'" + (item.complete ? "disabled" : "") +  ">";
 								}
 								todoListHtml += "	</th>";
 								
 								todoListHtml += "	<td class='text-center'>" + item.id + "</td>";
-								todoListHtml += "	<td >" + item.job + "</td>";
+								
 								if(item.complete){
-									todoListHtml += "	<td class='text-center'>완료</td>";
+									todoListHtml += "	<td ><del>" + item.job + "</del></td>";
+									todoListHtml += "	<td class='text-center'><i class='far fa-check-square'></i></td>";
 								}else{
-									todoListHtml += "	<td class='text-center'>미완료</td>";
+									todoListHtml += "	<td >" + item.job + "</td>";
+									todoListHtml += "	<td class='text-center'><i class='far fa-square'></i></td>";
 								}
 								
 								todoListHtml += "</tr>";

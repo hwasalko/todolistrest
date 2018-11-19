@@ -1,7 +1,6 @@
 package com.hwasalko.app.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.hwasalko.app.entity.ToDo;
 import com.hwasalko.app.entity.ToDoRef;
 
 /**
