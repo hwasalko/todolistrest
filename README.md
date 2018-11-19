@@ -111,3 +111,7 @@
 - eclipse 이용 시
 1. git clone (https://github.com/hwasalko/todolistrest.git)
 2. Run As -> Java Application
+```
+
+## 확인방법
+- http://localhost/
