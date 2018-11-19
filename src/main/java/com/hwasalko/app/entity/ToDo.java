@@ -21,6 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -35,6 +36,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class ToDo {
 
 	// id (pk)
@@ -76,6 +78,10 @@ public class ToDo {
 	
 	
 	
+	// 생성자
+	public ToDo(String job) {
+		this.job = job;
+	}
 
 	
 	// 추가 매소드
