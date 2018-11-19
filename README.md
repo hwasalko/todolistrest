@@ -99,14 +99,15 @@
 - 터미널 이용 시 
 ``` bash
 ./mvnw clean install
-./ java -jar target/ToDoListRest-0.0.1-SNAPSHOT.jar
+./java -jar target/ToDoListRest-0.0.1-SNAPSHOT.jar
 
 - STS 이용 시
+```
 1. git clone (https://github.com/hwasalko/todolistrest.git)
 2. Run As -> Spring boot Application
-```
+
 
 - eclipse 이용 시
+```
 1. git clone (https://github.com/hwasalko/todolistrest.git)
 2. Run As -> Java Application
-```
