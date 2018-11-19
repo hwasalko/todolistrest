@@ -96,8 +96,8 @@
     - '완료처리' 기능과 비슷하게 참조ID가 존재할 경우 삭제 불가하도록 구현    
     
 ## 빌드 및 실행 방법
-- ``` bash
-# Using terminal
+- 터미널 이용 시 
+``` bash
 ./mvnw clean install
 ./ java -jar target/ToDoListRest-0.0.1-SNAPSHOT.jar
 
