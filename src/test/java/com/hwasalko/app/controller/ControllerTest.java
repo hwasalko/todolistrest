@@ -122,6 +122,9 @@ public class ControllerTest {
 	@Test
 	public void deleteTodosTest() throws Exception {
 		
+		// 삭제 테스트를 위해 데이터 1건 저장
+		postTodosTest();
+		
 		mockMvc.perform(delete("/todos/1"))
 	            .andExpect(status().isOk())
 	            .andExpect(content().contentType(MediaType.parseMediaType("application/json;charset=UTF-8")))
@@ -138,8 +141,10 @@ public class ControllerTest {
 	@Test
 	public void putTodosTest() throws Exception {
 		
+		// 수정 테스트를 위해 데이터 1건 저장
+		postTodosTest();
+		
 		mockMvc.perform( put("/todos/1")
-										.param("id","1")
 										.param("job", "할일(수정사항)")
 				)
 	            .andExpect(status().isOk())
@@ -151,14 +156,16 @@ public class ControllerTest {
 	
 	
 	/**
-	 *  PUT 테스트 (/todos/{id})
+	 *  PATCH 테스트 (/todos/{id})
 	 * @throws Exception
 	 */
 	@Test
 	public void patchTodosTest() throws Exception {
 		
+		// 처리완료 테스트를 위해 데이터 1건 저장
+		postTodosTest();
+		
 		mockMvc.perform( patch("/todos/1")
-										.param("id","1")
 										.param("complete", "true")
 				)
 	            .andExpect(status().isOk())
