@@ -98,7 +98,7 @@
 ## 빌드 및 실행 방법
 - 터미널 이용 시
 ``` bash
-./mvn package
+./mvn clean package
 ./java -jar target/ToDoListRest-0.0.1-SNAPSHOT.jar
 ```
 
