@@ -144,7 +144,7 @@ public class ControllerTest {
 		// 수정 테스트를 위해 데이터 1건 저장
 		postTodosTest();
 		
-		mockMvc.perform( put("/todos/1")
+		mockMvc.perform( put("/todos/3")
 										.param("job", "할일(수정사항)")
 				)
 	            .andExpect(status().isOk())
